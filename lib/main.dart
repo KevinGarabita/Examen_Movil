@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'screens/products_screen.dart';
+import 'screens/home_screen.dart';
 import 'theme/app_theme.dart';
 
 void main() {
@@ -16,7 +16,7 @@ class StoreApp extends StatelessWidget {
       title: 'Tienda Examen',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      home: const ProductsScreen(),
+      home: const HomeScreen(),
     );
   }
 }
