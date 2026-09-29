@@ -4,6 +4,7 @@ import '../models/cart.dart';
 import '../services/cart_service.dart';
 import '../widgets/cart_list_tile.dart';
 import '../widgets/future_content.dart';
+import 'cart_detail_screen.dart';
 
 class CartsScreen extends StatefulWidget {
   const CartsScreen({super.key});
@@ -26,6 +27,12 @@ class _CartsScreenState extends State<CartsScreen> {
     setState(() => _cartsFuture = _cartService.getCarts());
   }
 
+  void _openDetail(Cart cart) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => CartDetailScreen(cartId: cart.id)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +42,10 @@ class _CartsScreenState extends State<CartsScreen> {
         onRetry: _reload,
         builder: (context, carts) => ListView.builder(
           itemCount: carts.length,
-          itemBuilder: (context, index) => CartListTile(cart: carts[index]),
+          itemBuilder: (context, index) {
+            final cart = carts[index];
+            return CartListTile(cart: cart, onTap: () => _openDetail(cart));
+          },
         ),
       ),
     );

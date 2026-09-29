@@ -30,4 +30,22 @@ void main() {
     expect(find.text('Cliente - 1'), findsNWidgets(2));
     expect(find.text('Cliente - 8'), findsOneWidget);
   });
+
+  testWidgets('el detalle del carrito muestra cliente, productos y total', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const StoreApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Carritos'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Cliente - 2'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Carrito #3'), findsOneWidget);
+    expect(find.text('Nombre: david morrison'), findsOneWidget);
+    expect(find.text('\$109.95 x 2'), findsOneWidget);
+    expect(find.text('\$219.90'), findsOneWidget);
+    expect(find.text('Total: \$283.90'), findsOneWidget);
+  });
 }
