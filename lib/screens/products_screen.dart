@@ -4,6 +4,7 @@ import '../models/product.dart';
 import '../services/product_service.dart';
 import '../widgets/future_content.dart';
 import '../widgets/product_list_tile.dart';
+import 'product_detail_screen.dart';
 
 class ProductsScreen extends StatefulWidget {
   const ProductsScreen({super.key});
@@ -26,6 +27,14 @@ class _ProductsScreenState extends State<ProductsScreen> {
     setState(() => _productsFuture = _productService.getProducts());
   }
 
+  void _openDetail(Product product) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ProductDetailScreen(productId: product.id),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,8 +44,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
         onRetry: _reload,
         builder: (context, products) => ListView.builder(
           itemCount: products.length,
-          itemBuilder: (context, index) =>
-              ProductListTile(product: products[index]),
+          itemBuilder: (context, index) {
+            final product = products[index];
+            return ProductListTile(
+              product: product,
+              onTap: () => _openDetail(product),
+            );
+          },
         ),
       ),
     );
