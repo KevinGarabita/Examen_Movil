@@ -20,7 +20,7 @@ Future<void> login(
   String password,
 ) async {
   await tester.enterText(
-    find.widgetWithText(TextFormField, 'Usuario / Correo'),
+    find.widgetWithText(TextFormField, 'Usuario'),
     username,
   );
   await tester.enterText(
@@ -39,7 +39,7 @@ void main() {
       await tester.tap(find.text('Aceptar'));
       await tester.pump();
 
-      expect(find.text('Ingresa tu usuario o correo'), findsOneWidget);
+      expect(find.text('Ingresa tu usuario'), findsOneWidget);
       expect(find.text('Ingresa tu contraseña'), findsOneWidget);
     });
 
