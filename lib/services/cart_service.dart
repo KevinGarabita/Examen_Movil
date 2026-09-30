@@ -1,16 +1,15 @@
-import '../data/local_json.dart';
 import '../models/cart.dart';
+import 'api.dart';
 
-/// Consulta de carritos. Por ahora usa los datos locales.
+/// Consulta de carritos en Fake Store API.
 class CartService {
   Future<List<Cart>> getCarts() async {
-    final List<dynamic> data = await readLocalJson('carts.json');
+    final List<dynamic> data = await getFromFakeStore('/carts');
     return data.map((json) => Cart.fromJson(json)).toList();
   }
 
   Future<Cart> getCartById(int id) async {
-    final List<dynamic> data = await readLocalJson('carts.json');
-    final json = data.firstWhere((cart) => cart['id'] == id);
-    return Cart.fromJson(json);
+    final data = await getFromFakeStore('/carts/$id');
+    return Cart.fromJson(data);
   }
 }

@@ -6,6 +6,8 @@ import 'package:examen_movil/main.dart';
 import 'package:examen_movil/screens/home_screen.dart';
 import 'package:examen_movil/theme/app_theme.dart';
 
+import 'fake_api.dart';
+
 Future<void> pumpHome(WidgetTester tester) async {
   await tester.pumpWidget(
     MaterialApp(theme: AppTheme.light, home: const HomeScreen()),
@@ -57,20 +59,21 @@ void main() {
       expect(find.text('TIENDA EXAMEN'), findsOneWidget);
     });
 
-    testWidgets('entra a la pantalla principal con el usuario de prueba', (
-      tester,
-    ) async {
-      await tester.pumpWidget(const StoreApp());
+    testWidgetsWithFakeApi(
+      'entra a la pantalla principal con el usuario de prueba',
+      (tester) async {
+        await tester.pumpWidget(const StoreApp());
 
-      await login(tester, 'emilys', 'emilyspass');
+        await login(tester, 'emilys', 'emilyspass');
 
-      expect(find.text('Productos'), findsOneWidget);
-      expect(find.text('TIENDA EXAMEN'), findsNothing);
-    });
+        expect(find.text('Productos'), findsOneWidget);
+        expect(find.text('TIENDA EXAMEN'), findsNothing);
+      },
+    );
   });
 
   group('Inicio', () {
-    testWidgets('muestra la lista de productos', (tester) async {
+    testWidgetsWithFakeApi('muestra la lista de productos', (tester) async {
       await pumpHome(tester);
 
       expect(find.text('Productos'), findsOneWidget);
@@ -78,7 +81,7 @@ void main() {
       expect(find.text('jewelery - \$695.00'), findsOneWidget);
     });
 
-    testWidgets('la barra inferior cambia a la lista de carritos', (
+    testWidgetsWithFakeApi('la barra inferior cambia a la lista de carritos', (
       tester,
     ) async {
       await pumpHome(tester);
@@ -87,25 +90,26 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Carritos de compra'), findsOneWidget);
-      expect(find.text('Cliente - 1'), findsNWidgets(2));
-      expect(find.text('Cliente - 8'), findsOneWidget);
+      expect(find.text('Cliente - 1'), findsOneWidget);
+      expect(find.text('Cliente - 2'), findsOneWidget);
     });
 
-    testWidgets('el detalle del carrito muestra cliente, productos y total', (
-      tester,
-    ) async {
-      await pumpHome(tester);
+    testWidgetsWithFakeApi(
+      'el detalle del carrito muestra cliente, productos y total',
+      (tester) async {
+        await pumpHome(tester);
 
-      await tester.tap(find.text('Carritos'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Cliente - 2'));
-      await tester.pumpAndSettle();
+        await tester.tap(find.text('Carritos'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Cliente - 2'));
+        await tester.pumpAndSettle();
 
-      expect(find.text('Carrito #3'), findsOneWidget);
-      expect(find.text('Nombre: david morrison'), findsOneWidget);
-      expect(find.text('\$109.95 x 2'), findsOneWidget);
-      expect(find.text('\$219.90'), findsOneWidget);
-      expect(find.text('Total: \$283.90'), findsOneWidget);
-    });
+        expect(find.text('Carrito #3'), findsOneWidget);
+        expect(find.text('Nombre: david morrison'), findsOneWidget);
+        expect(find.text('\$109.95 x 2'), findsOneWidget);
+        expect(find.text('\$219.90'), findsOneWidget);
+        expect(find.text('Total: \$283.90'), findsOneWidget);
+      },
+    );
   });
 }

@@ -5,21 +5,23 @@ import 'package:examen_movil/services/cart_service.dart';
 import 'package:examen_movil/services/product_service.dart';
 import 'package:examen_movil/services/user_service.dart';
 
+import 'fake_api.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test(
+  testWithFakeApi(
     'carga los productos y convierte los precios enteros a double',
     () async {
       final products = await ProductService().getProducts();
       final bracelet = await ProductService().getProductById(5);
 
-      expect(products, hasLength(20));
+      expect(products.map((product) => product.id), [1, 5]);
       expect(bracelet.price, 695.0);
     },
   );
 
-  test('carga el carrito 3 con su usuario', () async {
+  testWithFakeApi('carga el carrito 3 con su usuario', () async {
     final cart = await CartService().getCartById(3);
     final user = await UserService().getUserById(cart.userId);
 
@@ -27,6 +29,10 @@ void main() {
     expect(cart.products.map((item) => item.quantity), [2, 1]);
     expect(user.fullName, 'david morrison');
     expect(user.email, 'morrison@gmail.com');
+  });
+
+  testWithFakeApi('lanza un error si la API no responde bien', () async {
+    await expectLater(ProductService().getProductById(99), throwsException);
   });
 
   test(
