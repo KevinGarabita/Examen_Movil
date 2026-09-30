@@ -8,8 +8,6 @@ import 'package:examen_movil/services/user_service.dart';
 import 'fake_api.dart';
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   testWithFakeApi(
     'carga los productos y convierte los precios enteros a double',
     () async {

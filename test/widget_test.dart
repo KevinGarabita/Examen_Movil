@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:examen_movil/main.dart';
@@ -33,10 +32,6 @@ Future<void> login(
 }
 
 void main() {
-  // Sin esto, una prueba recibe lecturas de JSON en caché que empezaron en la
-  // prueba anterior y nunca terminan en su tiempo simulado.
-  setUp(rootBundle.clear);
-
   group('Login', () {
     testWidgets('pide llenar los campos vacíos', (tester) async {
       await tester.pumpWidget(const StoreApp());
