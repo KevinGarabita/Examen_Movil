@@ -1,16 +1,15 @@
-import '../data/local_json.dart';
 import '../models/product.dart';
+import 'api.dart';
 
-/// Consulta de productos. Por ahora usa los datos locales.
+/// Consulta de productos en Fake Store API.
 class ProductService {
   Future<List<Product>> getProducts() async {
-    final List<dynamic> data = await readLocalJson('products.json');
+    final List<dynamic> data = await getFromFakeStore('/products');
     return data.map((json) => Product.fromJson(json)).toList();
   }
 
   Future<Product> getProductById(int id) async {
-    final List<dynamic> data = await readLocalJson('products.json');
-    final json = data.firstWhere((product) => product['id'] == id);
-    return Product.fromJson(json);
+    final data = await getFromFakeStore('/products/$id');
+    return Product.fromJson(data);
   }
 }

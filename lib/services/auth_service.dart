@@ -1,16 +1,27 @@
-import '../data/local_json.dart';
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+
 import '../models/auth_user.dart';
+import 'api.dart';
 
-/// Inicio de sesión. Por ahora valida contra el usuario de prueba local.
+/// Inicio de sesión con el endpoint de autenticación de DummyJSON.
 class AuthService {
-  /// Devuelve null si el usuario o la contraseña no coinciden. Con los datos
-  /// locales se acepta tanto el usuario como el correo de prueba.
+  /// Devuelve null si el usuario o la contraseña son incorrectos.
   Future<AuthUser?> login(String username, String password) async {
-    final Map<String, dynamic> testUser = await readLocalJson('auth_user.json');
-    final isKnownUser =
-        username == testUser['username'] || username == testUser['email'];
+    final response = await http
+        .post(
+          Uri.parse('https://dummyjson.com/auth/login'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({'username': username, 'password': password}),
+        )
+        .timeout(apiTimeout);
 
-    if (!isKnownUser || password != testUser['password']) return null;
-    return AuthUser.fromJson(testUser);
+    // DummyJSON responde 400 cuando las credenciales no coinciden.
+    if (response.statusCode == 400) return null;
+    if (response.statusCode != 200) {
+      throw Exception('Error ${response.statusCode} al iniciar sesión');
+    }
+    return AuthUser.fromJson(jsonDecode(response.body));
   }
 }

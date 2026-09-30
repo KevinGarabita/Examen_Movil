@@ -74,10 +74,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 const _StoreTitle(),
                 const SizedBox(height: 16),
                 AppTextField(
-                  label: 'Usuario / Correo',
+                  label: 'Usuario',
                   controller: _usernameController,
                   validator: (value) =>
-                      _validateRequired(value, 'Ingresa tu usuario o correo'),
+                      _validateRequired(value, 'Ingresa tu usuario'),
                 ),
                 const SizedBox(height: 16),
                 AppTextField(
