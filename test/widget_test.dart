@@ -48,7 +48,7 @@ void main() {
       expect(find.text('Ingresa tu contraseña'), findsOneWidget);
     });
 
-    testWidgets('avisa cuando las credenciales son incorrectas', (
+    testWidgetsWithFakeApi('avisa cuando las credenciales son incorrectas', (
       tester,
     ) async {
       await tester.pumpWidget(const StoreApp());

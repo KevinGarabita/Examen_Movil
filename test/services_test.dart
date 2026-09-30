@@ -35,16 +35,13 @@ void main() {
     await expectLater(ProductService().getProductById(99), throwsException);
   });
 
-  test(
-    'el login acepta usuario o correo y rechaza la contraseña incorrecta',
+  testWithFakeApi(
+    'el login acepta al usuario de prueba y rechaza la contraseña incorrecta',
     () async {
       final authService = AuthService();
 
-      expect(await authService.login('emilys', 'emilyspass'), isNotNull);
-      expect(
-        await authService.login('emily.johnson@x.dummyjson.com', 'emilyspass'),
-        isNotNull,
-      );
+      final user = await authService.login('emilys', 'emilyspass');
+      expect(user?.firstName, 'Emily');
       expect(await authService.login('emilys', 'incorrecta'), isNull);
     },
   );

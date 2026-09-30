@@ -16,15 +16,44 @@ void testWidgetsWithFakeApi(String description, WidgetTesterCallback body) {
   });
 }
 
-/// Responde como Fake Store API con unos pocos datos, para que las pruebas no
-/// dependan de internet. Si no conoce la URL responde 404.
+/// Responde como Fake Store API y DummyJSON con unos pocos datos, para que las
+/// pruebas no dependan de internet. Si no conoce la URL responde 404.
 final _fakeApi = MockClient((request) async {
+  if (request.url.toString() == 'https://dummyjson.com/auth/login') {
+    return _login(request);
+  }
+
   final data = _responses[request.url.toString()];
   if (data == null) return http.Response('Not Found', 404);
   return http.Response(jsonEncode(data), 200);
 });
 
+/// Igual que DummyJSON, responde 400 si las credenciales no coinciden.
+http.Response _login(http.Request request) {
+  final credentials = jsonDecode(request.body);
+  final isValid =
+      credentials['username'] == 'emilys' &&
+      credentials['password'] == 'emilyspass';
+
+  if (!isValid) {
+    return http.Response(jsonEncode({'message': 'Invalid credentials'}), 400);
+  }
+  return http.Response(jsonEncode(_emily), 200);
+}
+
 // Datos con la misma forma que las respuestas reales.
+
+const _emily = {
+  'id': 1,
+  'username': 'emilys',
+  'email': 'emily.johnson@x.dummyjson.com',
+  'firstName': 'Emily',
+  'lastName': 'Johnson',
+  'gender': 'female',
+  'image': 'https://dummyjson.com/icon/emilys/128',
+  'accessToken': 'token-de-prueba',
+  'refreshToken': 'token-de-prueba',
+};
 
 const _backpack = {
   'id': 1,
