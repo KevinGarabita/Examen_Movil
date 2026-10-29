@@ -1,24 +1,12 @@
 import 'dart:convert';
 
-import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
-/// Igual que [test], pero las peticiones HTTP las responde [_fakeApi].
-void testWithFakeApi(String description, Future<void> Function() body) {
-  test(description, () => http.runWithClient(body, () => _fakeApi));
-}
-
-/// Igual que [testWidgets], pero las peticiones HTTP las responde [_fakeApi].
-void testWidgetsWithFakeApi(String description, WidgetTesterCallback body) {
-  testWidgets(description, (tester) {
-    return http.runWithClient(() => body(tester), () => _fakeApi);
-  });
-}
-
-/// Responde como Fake Store API y DummyJSON con unos pocos datos, para que las
-/// pruebas no dependan de internet. Si no conoce la URL responde 404.
-final _fakeApi = MockClient((request) async {
+/// Cliente HTTP falso para las pruebas: responde como Fake Store API y
+/// DummyJSON con unos pocos datos, para que no dependan de internet. Si no
+/// conoce la URL responde 404.
+final fakeApi = MockClient((request) async {
   if (request.url.toString() == 'https://dummyjson.com/auth/login') {
     return _login(request);
   }
