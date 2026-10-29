@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/cart.dart';
+import '../carts/cart.dart';
 import 'cart_icon.dart';
 
 class CartListTile extends StatelessWidget {

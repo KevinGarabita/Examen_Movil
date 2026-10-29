@@ -1,12 +1,30 @@
 import 'package:flutter/material.dart';
 
-import '../services/auth_service.dart';
-import '../widgets/app_text_field.dart';
-import '../widgets/primary_button.dart';
-import 'home_screen.dart';
+import 'package:examen_movil/base/custom_exception.dart';
+import 'package:examen_movil/cart_detail/cart_detail_service.dart';
+import 'package:examen_movil/carts/carts_service.dart';
+import 'package:examen_movil/home/home_screen.dart';
+import 'package:examen_movil/login/login_service.dart';
+import 'package:examen_movil/product_by_id/product_by_id_service.dart';
+import 'package:examen_movil/products/products_service.dart';
+import 'package:examen_movil/widgets/app_text_field.dart';
+import 'package:examen_movil/widgets/primary_button.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final LoginService loginService;
+  final ProductsService productsService;
+  final ProductByIdService productByIdService;
+  final CartsService cartsService;
+  final CartDetailService cartDetailService;
+
+  const LoginScreen({
+    super.key,
+    required this.loginService,
+    required this.productsService,
+    required this.productByIdService,
+    required this.cartsService,
+    required this.cartDetailService,
+  });
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -16,7 +34,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _authService = AuthService();
   bool _isLoading = false;
 
   @override
@@ -40,19 +57,30 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
     try {
-      final user = await _authService.login(
+      await widget.loginService.login(
         _usernameController.text.trim(),
         _passwordController.text,
       );
       if (!mounted) return;
-
-      if (user == null) {
-        _showError('Usuario o contraseña incorrectos');
-      } else {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
-        );
-      }
+      // Login correcto: reemplaza la pantalla de login por la principal
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => HomeScreen(
+            productsService: widget.productsService,
+            productByIdService: widget.productByIdService,
+            cartsService: widget.cartsService,
+            cartDetailService: widget.cartDetailService,
+          ),
+        ),
+      );
+    } on CustomException catch (e) {
+      // DummyJSON responde 400 cuando las credenciales no coinciden.
+      if (!mounted) return;
+      _showError(
+        e.status == 400
+            ? 'Usuario o contraseña incorrectos'
+            : 'No se pudo iniciar sesión, intenta de nuevo',
+      );
     } catch (_) {
       if (mounted) _showError('No se pudo iniciar sesión, intenta de nuevo');
     } finally {

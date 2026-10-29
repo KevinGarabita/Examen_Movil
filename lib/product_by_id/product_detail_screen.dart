@@ -1,34 +1,40 @@
 import 'package:flutter/material.dart';
 
-import '../models/product.dart';
-import '../services/product_service.dart';
-import '../utils/price_formatter.dart';
-import '../widgets/future_content.dart';
-import '../widgets/primary_button.dart';
-import '../widgets/product_image.dart';
+import 'package:examen_movil/product_by_id/product_by_id_service.dart';
+import 'package:examen_movil/products/product.dart';
+import 'package:examen_movil/utils/price_formatter.dart';
+import 'package:examen_movil/widgets/future_content.dart';
+import 'package:examen_movil/widgets/primary_button.dart';
+import 'package:examen_movil/widgets/product_image.dart';
 
 class ProductDetailScreen extends StatefulWidget {
-  const ProductDetailScreen({super.key, required this.productId});
-
+  final ProductByIdService productByIdService;
   final int productId;
+
+  const ProductDetailScreen({
+    super.key,
+    required this.productByIdService,
+    required this.productId,
+  });
 
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
-  final _productService = ProductService();
   late Future<Product> _productFuture;
 
   @override
   void initState() {
     super.initState();
-    _productFuture = _productService.getProductById(widget.productId);
+    _productFuture = widget.productByIdService.getProductById(widget.productId);
   }
 
   void _reload() {
     setState(() {
-      _productFuture = _productService.getProductById(widget.productId);
+      _productFuture = widget.productByIdService.getProductById(
+        widget.productId,
+      );
     });
   }
 

@@ -1,59 +1,46 @@
 import 'package:flutter/material.dart';
 
-import '../models/cart.dart';
-import '../models/product.dart';
-import '../models/user.dart';
-import '../services/cart_service.dart';
-import '../services/product_service.dart';
-import '../services/user_service.dart';
-import '../utils/price_formatter.dart';
-import '../widgets/cart_item_tile.dart';
-import '../widgets/future_content.dart';
-import '../widgets/section_title.dart';
+import 'package:examen_movil/cart_detail/cart_detail.dart';
+import 'package:examen_movil/cart_detail/cart_detail_service.dart';
+import 'package:examen_movil/utils/price_formatter.dart';
+import 'package:examen_movil/widgets/cart_item_tile.dart';
+import 'package:examen_movil/widgets/future_content.dart';
+import 'package:examen_movil/widgets/section_title.dart';
 
 class CartDetailScreen extends StatefulWidget {
-  const CartDetailScreen({super.key, required this.cartId});
-
+  final CartDetailService cartDetailService;
   final int cartId;
+
+  const CartDetailScreen({
+    super.key,
+    required this.cartDetailService,
+    required this.cartId,
+  });
 
   @override
   State<CartDetailScreen> createState() => _CartDetailScreenState();
 }
 
 class _CartDetailScreenState extends State<CartDetailScreen> {
-  final _cartService = CartService();
-  final _userService = UserService();
-  final _productService = ProductService();
-  late Future<_CartDetail> _detailFuture;
+  late Future<CartDetail> _detailFuture;
 
   @override
   void initState() {
     super.initState();
-    _detailFuture = _loadDetail();
+    _detailFuture = widget.cartDetailService.getCartDetail(widget.cartId);
   }
 
   void _reload() {
-    setState(() => _detailFuture = _loadDetail());
-  }
-
-  Future<_CartDetail> _loadDetail() async {
-    final cart = await _cartService.getCartById(widget.cartId);
-    // El usuario y los productos no dependen entre sí, se piden al mismo tiempo.
-    final userFuture = _userService.getUserById(cart.userId);
-    final linesFuture = Future.wait(cart.products.map(_loadLine));
-    return _CartDetail(user: await userFuture, lines: await linesFuture);
-  }
-
-  Future<_CartLine> _loadLine(CartProduct item) async {
-    final product = await _productService.getProductById(item.productId);
-    return _CartLine(product: product, quantity: item.quantity);
+    setState(() {
+      _detailFuture = widget.cartDetailService.getCartDetail(widget.cartId);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Carrito #${widget.cartId}')),
-      body: FutureContent<_CartDetail>(
+      body: FutureContent<CartDetail>(
         future: _detailFuture,
         onRetry: _reload,
         builder: (context, detail) => _CartDetailView(detail: detail),
@@ -62,27 +49,10 @@ class _CartDetailScreenState extends State<CartDetailScreen> {
   }
 }
 
-class _CartDetail {
-  const _CartDetail({required this.user, required this.lines});
-
-  final User user;
-  final List<_CartLine> lines;
-
-  double get total =>
-      lines.fold(0, (sum, line) => sum + line.product.price * line.quantity);
-}
-
-class _CartLine {
-  const _CartLine({required this.product, required this.quantity});
-
-  final Product product;
-  final int quantity;
-}
-
 class _CartDetailView extends StatelessWidget {
   const _CartDetailView({required this.detail});
 
-  final _CartDetail detail;
+  final CartDetail detail;
 
   @override
   Widget build(BuildContext context) {

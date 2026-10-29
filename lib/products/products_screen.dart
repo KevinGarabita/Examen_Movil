@@ -1,36 +1,46 @@
 import 'package:flutter/material.dart';
 
-import '../models/product.dart';
-import '../services/product_service.dart';
-import '../widgets/future_content.dart';
-import '../widgets/product_list_tile.dart';
-import 'product_detail_screen.dart';
+import 'package:examen_movil/product_by_id/product_by_id_service.dart';
+import 'package:examen_movil/product_by_id/product_detail_screen.dart';
+import 'package:examen_movil/products/product.dart';
+import 'package:examen_movil/products/products_service.dart';
+import 'package:examen_movil/widgets/future_content.dart';
+import 'package:examen_movil/widgets/product_list_tile.dart';
 
 class ProductsScreen extends StatefulWidget {
-  const ProductsScreen({super.key});
+  final ProductsService productsService;
+  final ProductByIdService productByIdService;
+
+  const ProductsScreen({
+    super.key,
+    required this.productsService,
+    required this.productByIdService,
+  });
 
   @override
   State<ProductsScreen> createState() => _ProductsScreenState();
 }
 
 class _ProductsScreenState extends State<ProductsScreen> {
-  final _productService = ProductService();
   late Future<List<Product>> _productsFuture;
 
   @override
   void initState() {
     super.initState();
-    _productsFuture = _productService.getProducts();
+    _productsFuture = widget.productsService.getProducts();
   }
 
   void _reload() {
-    setState(() => _productsFuture = _productService.getProducts());
+    setState(() => _productsFuture = widget.productsService.getProducts());
   }
 
   void _openDetail(Product product) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => ProductDetailScreen(productId: product.id),
+        builder: (_) => ProductDetailScreen(
+          productByIdService: widget.productByIdService,
+          productId: product.id,
+        ),
       ),
     );
   }

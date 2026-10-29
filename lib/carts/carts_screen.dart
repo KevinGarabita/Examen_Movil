@@ -1,35 +1,47 @@
 import 'package:flutter/material.dart';
 
-import '../models/cart.dart';
-import '../services/cart_service.dart';
-import '../widgets/cart_list_tile.dart';
-import '../widgets/future_content.dart';
-import 'cart_detail_screen.dart';
+import 'package:examen_movil/cart_detail/cart_detail_screen.dart';
+import 'package:examen_movil/cart_detail/cart_detail_service.dart';
+import 'package:examen_movil/carts/cart.dart';
+import 'package:examen_movil/carts/carts_service.dart';
+import 'package:examen_movil/widgets/cart_list_tile.dart';
+import 'package:examen_movil/widgets/future_content.dart';
 
 class CartsScreen extends StatefulWidget {
-  const CartsScreen({super.key});
+  final CartsService cartsService;
+  final CartDetailService cartDetailService;
+
+  const CartsScreen({
+    super.key,
+    required this.cartsService,
+    required this.cartDetailService,
+  });
 
   @override
   State<CartsScreen> createState() => _CartsScreenState();
 }
 
 class _CartsScreenState extends State<CartsScreen> {
-  final _cartService = CartService();
   late Future<List<Cart>> _cartsFuture;
 
   @override
   void initState() {
     super.initState();
-    _cartsFuture = _cartService.getCarts();
+    _cartsFuture = widget.cartsService.getCarts();
   }
 
   void _reload() {
-    setState(() => _cartsFuture = _cartService.getCarts());
+    setState(() => _cartsFuture = widget.cartsService.getCarts());
   }
 
   void _openDetail(Cart cart) {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => CartDetailScreen(cartId: cart.id)),
+      MaterialPageRoute(
+        builder: (_) => CartDetailScreen(
+          cartDetailService: widget.cartDetailService,
+          cartId: cart.id,
+        ),
+      ),
     );
   }
 

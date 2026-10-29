@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/product.dart';
+import '../products/product.dart';
 import '../utils/price_formatter.dart';
 import 'product_image.dart';
 
